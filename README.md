@@ -1,4 +1,7 @@
 # digital-electronics1
+# The largest heading
+## The second largest heading
+###### The smallest heading
 Alternatively, for H1 and H2, an underline-ish style:
 Strong emphasis, aka bold, with **asterisks** or __underscores__.
 Here's our logo (hover to see the title text):
