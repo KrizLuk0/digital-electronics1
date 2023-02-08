@@ -31,6 +31,8 @@ end architecture dataflow;
    | 1 | 1 | 1 | 0 | 0 | 0 |
 
 4.In EDA Playground, verify at least one of the Distributive laws:
+
+
 ![Second Distributive law](images/SecDist.png)
 
 
