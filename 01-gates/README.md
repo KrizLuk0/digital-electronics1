@@ -32,6 +32,8 @@ end architecture dataflow;
 
 4.In EDA Playground, verify at least one of the Distributive laws:
 ![Second Distributive law](images/SecDist.png)
+
+
 ![Second Distributive law](images/SimSecDist.png)
 
 
@@ -39,7 +41,7 @@ end architecture dataflow;
 
 1. Screenshot with simulated time waveforms. Always display all inputs and outputs (display the inputs at the top of the image, the outputs below them) at the appropriate time scale!
 
-   ![your figure](images\Simulation.png)
+   ![My figure](images/Simulation.png)
 
 2. Link to your public EDA Playground example:
 
