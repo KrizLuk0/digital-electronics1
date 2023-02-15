@@ -24,19 +24,19 @@
    | 15 | 1 1 | 1 1 | 0 | 1 | 0 |
 
 
-   Greater SoP:
+   #### Greater SoP:
 
    ![K-maps](images/TableBmb.png)
 
-   Greater Pos:
+   #### Greater Pos:
 
    ![K-maps](images/TableBM.png)
    
-   Less SoP:
+   #### Less SoP:
 
    ![K-maps](images/TableBlessm.png)
 
-   Less PoS:
+   #### Less PoS:
 
    ![K-maps](images/TableBlessMb.png)
 
