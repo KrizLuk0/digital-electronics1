@@ -31,6 +31,7 @@
    Greater Pos:
 
    ![K-maps](images/TableBM.png)
+   
    Less SoP:
 
    ![K-maps](images/TableBlessm.png)
@@ -47,7 +48,7 @@
 
 1. Listing of VHDL stimulus process from testbench file (`testbench.vhd`) with at least one assert (use BCD codes of your student ID digits as input combinations). Always use syntax highlighting, meaningful comments, and follow VHDL guidelines:
 
-   Last two digits of my student ID: **xxxx??**
+   Last two digits of my student ID: **231514**
 
 ```vhdl
    p_stimulus : process
