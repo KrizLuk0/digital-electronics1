@@ -47,10 +47,10 @@ begin
           );	
   stim_proc: process
   	begin
-  	    s_a<="001";
-  	    s_b<="000";
-  	    s_c<="000";
-  	    s_d<="001";
+  	    s_a<="000";
+  	    s_b<="001";
+  	    s_c<="010";
+  	    s_d<="101";
   	    
     	s_sel <="00";
     	wait for 100 ns;
