@@ -29,13 +29,13 @@
    --------------------------------------------------------------------
    -- Experiments on your own: LED(7:4) indicators
 
-    LED(4) <= '1' when (SW= "0000") else '0';
+    LED(4) <= '1' when (SW= "0000") else '0'; -- LED_ONE
     -- Turn LED(5) on if input value is greater than "1001", ie 10, 11, 12, ...
-    LED(5) <= '1' when (SW= "1010" OR SW="1011" OR SW="1011" OR SW="1100" OR SW="1101" OR SW="1110" OR SW="1111") else '0';
+    LED(5) <= '1' when (SW= "1010" OR SW="1011" OR SW="1011" OR SW="1100" OR SW="1101" OR SW="1110" OR SW="1111") else '0'; --LED_TWO
     -- Turn LED(6) on if input value is odd, ie 1, 3, 5, ...
-    LED(6) <= '1' when(SW= "0001" OR SW="0011" OR SW="0101" OR SW="0111" OR SW="1001" OR SW="1011" OR SW="1101" OR SW="1111") else '0';
+    LED(6) <= '1' when(SW= "0001" OR SW="0011" OR SW="0101" OR SW="0111" OR SW="1001" OR SW="1011" OR SW="1101" OR SW="1111") else '0'; --LED_THREE
     -- Turn LED(7) on if input value is a power of two, ie 1, 2, 4, or 8
-    LED(7) <= '1' when(SW= "0001" OR SW="0010" OR SW="0100" OR SW="1000")else '0';
+    LED(7) <= '1' when(SW= "0001" OR SW="0010" OR SW="0100" OR SW="1000")else '0'; --LED_FOUR
 
    ```
 
