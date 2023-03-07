@@ -2,9 +2,9 @@
 -- Company: 
 -- Engineer: 
 -- 
--- Create Date: 03/07/2023 01:08:25 PM
+-- Create Date: 07.03.2023 15:36:16
 -- Design Name: 
--- Module Name: d_ff_rst - Behavioral
+-- Module Name: jfk_ff_rst - Behavioral
 -- Project Name: 
 -- Target Devices: 
 -- Tool Versions: 
@@ -31,32 +31,35 @@ use IEEE.STD_LOGIC_1164.ALL;
 --library UNISIM;
 --use UNISIM.VComponents.all;
 
-entity d_ff_rst is
-    Port ( clk : in STD_LOGIC;
+entity jfk_ff_rst is
+    Port ( J : in STD_LOGIC;
+           K : in STD_LOGIC;
            rst : in STD_LOGIC;
-           d : in STD_LOGIC;
+           clk : in STD_LOGIC;
            q : out STD_LOGIC;
            q_bar : out STD_LOGIC);
-end d_ff_rst;
+end jfk_ff_rst;
 
-architecture behavioral of d_ff_rst is
+architecture Behavioral of jfk_ff_rst is
+    signal sig_q : std_logic;
 begin
-    --------------------------------------------------------
-    -- p_d_ff_rst:
-    -- D type flip-flop with a high-active sync reset and
-    -- rising-edge clk.
-    -- q(n+1) = d
-    --------------------------------------------------------
-    p_d_ff_rst : process (clk)
+ p_jfk_ff_rst : process (clk)
     begin
         if rising_edge(clk) then  -- Synchronous process
             if(rst='1') then
-                q<='0';
-                q_bar<='1';                       
-            else   
-                q     <= d;
-                q_bar <= not d;
-            end if;
+                sig_q<='0';
+            elsif(J='0' AND K='0') then
+                sig_q <= sig_q;
+             elsif(J='1' AND K='1') then
+                sig_q<= not sig_q;
+             elsif(J='1' AND K='0') then
+                sig_q <='0';
+             else
+                sig_q <='1'; 
+             end if;                 
         end if;
-    end process p_d_ff_rst;
-end architecture behavioral;
+        q<=sig_q;
+        q_bar<=not sig_q;
+    end process p_jfk_ff_rst;
+
+end Behavioral;

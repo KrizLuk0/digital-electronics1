@@ -19,12 +19,18 @@ architecture testbench of tb_ff_rst is
     signal sig_clk_100MHz : std_logic;
     signal sig_rst        : std_logic;
     signal sig_data       : std_logic;
+
     signal sig_d_q        : std_logic;
     signal sig_dq_bar    : std_logic;
     
         signal t_sig_d_q        : std_logic;
     signal t_sig_dq_bar    : std_logic;
 
+
+             signal sig_data1       : std_logic;
+      signal sig_data2       : std_logic;
+      signal JK_sig_d_q        : std_logic;
+    signal JK_sig_dq_bar    : std_logic;
 
 begin
     -- Connecting testbench signals with d_ff_rst entity
@@ -44,6 +50,16 @@ begin
             t     => sig_data,
             q     => t_sig_d_q,
             q_bar => t_sig_dq_bar
+        );
+        
+         uut_jfk_ff_rst : entity work.jfk_ff_rst
+        port map (
+            clk   => sig_clk_100MHz,
+            rst   => sig_rst,
+            K     => sig_data1,
+            J     => sig_data2,
+            q     => JK_sig_d_q,
+            q_bar => JK_sig_dq_bar
         );
 
     --------------------------------------------------------
@@ -93,6 +109,13 @@ begin
         sig_data<='1'; wait for 17 ns;
         sig_data <='0'; wait for 30 ns;
         sig_data<='1'; wait for 41 ns;
+        
+        
+        sig_data1 <='0'; sig_data2<='1'; wait for 13 ns;
+        sig_data1 <='1'; sig_data2<='1'; wait for 13 ns;
+        sig_data1 <='0'; sig_data2<='0'; wait for 13 ns;
+        sig_data1 <='1'; sig_data2<='0'; wait for 13 ns;
+
         
 
         -- DEFINE YOUR INPUT DATA HERE
