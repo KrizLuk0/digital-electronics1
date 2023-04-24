@@ -55,20 +55,19 @@ begin
   p_cnt_up_down : process (clk) is
   begin
 
-    if rising_edge(clk) then
+    if (clk'event and clk='1') then
       if (rst = '1') then           -- Synchronous reset
         sig_cnt <= (others => '0'); -- Clear all bits
-      elsif (en = '1') then  
-        if (cnt_up='1') then
+      elsif (en = '1') then         -- Test if counter is enabled
+        if (cnt_up = '1') then 
             sig_cnt <= sig_cnt +1;
-        else
-            sig_cnt <= sig_cnt-1;           -- Test if counter is enabled
-        end if;
+        else 
+            sig_cnt <= sig_cnt -1;
+        end if;    
       end if;
     end if;
 
   end process p_cnt_up_down;
-  
 
   -- Output must be retyped from "unsigned" to "std_logic_vector"
   cnt <= std_logic_vector(sig_cnt);

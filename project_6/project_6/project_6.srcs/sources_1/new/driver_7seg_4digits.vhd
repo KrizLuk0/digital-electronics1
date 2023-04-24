@@ -1,3 +1,17 @@
+----------------------------------------------------------
+--
+--! @title Driver for 4-digit 7-segment display
+--! @author Tomas Fryza
+--! Dept. of Radio Electronics, Brno Univ. of Technology, Czechia
+--!
+--! @copyright (c) 2020 Tomas Fryza
+--! This work is licensed under the terms of the MIT license
+--
+-- Hardware: Nexys A7-50T, xc7a50ticsg324-1L
+-- Software: TerosHDL, Vivado 2020.2, EDA Playground
+--
+----------------------------------------------------------
+
 library ieee;
   use ieee.std_logic_1164.all;
   use ieee.numeric_std.all;
@@ -59,11 +73,8 @@ architecture behavioral of driver_7seg_4digits is
 
   -- Internal 4-bit value for 7-segment decoder
   signal sig_hex : std_logic_vector(3 downto 0);
-  
-  signal gnd_signal : std_logic;
 
 begin
-gnd_signal<='0';
 
   --------------------------------------------------------
   -- Instance (copy) of clock_enable entity generates
@@ -71,6 +82,10 @@ gnd_signal<='0';
   --------------------------------------------------------
   clk_en0 : entity work.clock_enable
     generic map (
+      -- FOR SIMULATION, KEEP THIS VALUE TO 4
+      -- FOR IMPLEMENTATION, CHANGE THIS VALUE TO 400,000
+      -- 4      @ 4 ns
+      -- 400000 @ 4 ms
       g_MAX => 400000
     )
     port map (
@@ -85,14 +100,14 @@ gnd_signal<='0';
   --------------------------------------------------------
   bin_cnt0 : entity work.cnt_up_down
     generic map (
-      g_CNT_WIDTH=>2
+      g_CNT_width => 2
     )
     port map (
-      en=>sig_en_4ms,
-      clk => clk,
-      rst => rst,
-      cnt_up=> gnd_signal,
-      cnt=>sig_cnt_2bit
+      clk    => clk,
+      rst    => rst,
+      en     => sig_en_4ms,
+      cnt_up => '0',
+      cnt    => sig_cnt_2bit
     );
 
   --------------------------------------------------------
@@ -115,7 +130,7 @@ gnd_signal<='0';
   p_mux : process (clk) is
   begin
 
-    if (rising_edge(clk)) then
+    if (clk'event and clk='1') then
       if (rst = '1') then
         sig_hex <= data0;
         dp      <= dp_vect(0);
@@ -133,7 +148,6 @@ gnd_signal<='0';
             sig_hex <= data2;
             dp      <= dp_vect(2);
             dig     <= "1011";
-
 
           when "01" =>
             sig_hex <= data1;
