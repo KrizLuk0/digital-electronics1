@@ -93,7 +93,7 @@ END COMPONENT;
     signal tx_fifo_not_empty    :   std_logic;
     signal tx_done_tick         :   std_logic; 
     signal Segment              :   std_logic_vector(8-1 downto 0);
-    signal wr_uart_syns         :   std_logic;
+
     
     
      
@@ -171,18 +171,18 @@ begin
     );
     
     
-    --fifo_tx_unit:   entity work.fifo(Behavioral)
-    --generic map(B=>DBIT, W=>FIFO_W)
-    --port map(
-       -- clk         => CLK100MHZ,
-        --reset       => reset,
-        --rd          => tx_done_tick,
-        --wr          => wr_uart_syns,
-        --w_data      => SW,
-        --empty       => tx_empty,
-        --full        => tx_full,
-        --r_data      => tx_fifo_out       
-    --);
+    fifo_tx_unit:   entity work.fifo(Behavioral)
+    generic map(B=>DBIT, W=>FIFO_W)
+    port map(
+        clk         => CLK100MHZ,
+        reset       => reset,
+        rd          => tx_done_tick,
+        wr          => wr_uart,
+        w_data      => SW,
+        empty       => tx_empty,
+        full        => tx_full,
+        r_data      => tx_fifo_out       
+    );
     uart_tx_unit:   entity work.uart_transmitter
     generic map(DBIT => DBIT, SB_TICK => SB_TICK)
     port map(
@@ -196,25 +196,6 @@ begin
     );    
     tx_fifo_not_empty <= tx_empty;
     
-   -- synch_unit: entity work.Synchronizer
-   -- port map(
-      --  clk_i       => CLK100MHZ,  
-       -- reset_i     => reset,
-       -- sig_i       => wr_uart,
-       -- sig_o       => wr_uart_syns
-   -- );
-    
-    fifo_TX : fifo_generator_0
-  PORT MAP (
-    clk => CLK100MHZ,
-    srst => reset,
-    din => SW,
-    wr_en => wr_uart,
-    rd_en => tx_done_tick,
-    dout => tx_fifo_out,
-    full => tx_full,
-    empty => tx_empty
-  );
-
+  
     
 end Behavioral;

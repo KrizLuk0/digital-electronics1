@@ -84,6 +84,10 @@ begin
     end if;
 end process;
 
+R_data <= array_reg(to_integer(unsigned(r_ptr_reg)));
+wr_en <= wr and (not full_reg);
+
+
          
     process(clk,reset)
 begin
