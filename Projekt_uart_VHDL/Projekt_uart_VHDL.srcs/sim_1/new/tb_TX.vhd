@@ -30,6 +30,7 @@ architecture Behavioral of uart_tx_tb is
     signal din      : std_logic_vector(7 downto 0) := (others => '0');
     signal tx_start : std_logic := '0';
     signal tx       : std_logic;
+    constant clk_i_period : time := 10 ns;   -- 10ns period = 100MHz
 
 begin
 
@@ -53,78 +54,32 @@ begin
     begin
         while true loop
             clk <= '0';
-            wait for 10 ns;
+            wait for clk_i_period/2;
             clk <= '1';
-            wait for 10 ns;
+            wait for clk_i_period/2;
         end loop;
     end process;
 
     -- Stimulus Process
     process
     begin
-        reset <= '1';
-        wait for 100 ns;
-        reset <= '0';
+              wait for 100 ns;	
+      wait for 100 ns;
+		
+		tx_start <= '0';                    -- start sending bits in 8N1 UART standart at 9600 baud
+		wait for 100 ns;
+		
+		tx_start <= '1';
+		s_tick <= '1';					-- return to passsive state
+		wait for 100 ns;
+		
+		tx_start <= '0';
+		s_tick <= '0';
+		wait for 100 ns;
 
-        wait for 100 ns;
-
-        din <= "01010101";
-        tx_start <= '1';
-
-        wait for 100 ns;
-
-        din <= "11110000";
-
-        wait for 300 ns;
-
-        din <= "10101010";
-
-        wait for 300 ns;
-
-        din <= "11111111";
-
-        wait for 300 ns;
-
-        din <= "00000000";
-        tx_start <= '0';
-
-        wait for 300 ns;
-
-        din <= "11001100";
-
-        wait for 300 ns;
-
-        din <= "00110011";
-
-        wait for 300 ns;
-
-        din <= "10101010";
-
-        wait for 300 ns;
-
-        din <= "01010101";
-
-        wait for 300 ns;
-
-        din <= "00000000";
-        tx_start <= '1';
-
-        wait for 300 ns;
-
-        din <= "11111111";
-
-        wait for 300 ns;
-
-        din <= "00001111";
-
-        wait for 300 ns;
-
-        din <= "11110000";
-        tx_start <= '0';
-
-        wait for 100 ns;
-
-        wait;
+		
+			
+      wait;
     end process;
 
 end Behavioral;

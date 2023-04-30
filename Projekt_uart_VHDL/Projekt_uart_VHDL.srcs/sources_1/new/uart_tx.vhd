@@ -1,115 +1,78 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
-use IEEE.numeric_std.ALL;
-
--- Uncomment the following library declaration if using
--- arithmetic functions with Signed or Unsigned values
---use IEEE.NUMERIC_STD.ALL;
-
--- Uncomment the following library declaration if instantiating
--- any Xilinx leaf cells in this code.
---library UNISIM;
---use UNISIM.VComponents.all;
+use IEEE.NUMERIC_STD.ALL;
 
 entity uart_tx is
-    generic(
-           DBIT : integer :=8;
-           SB_TICK : integer :=16
-    );
-    Port ( clk           : in STD_LOGIC;
-           reset         : in STD_LOGIC;
-           s_tick        : in STD_LOGIC;
-           din           : in STD_LOGIC_VECTOR (7 downto 0);
-           tx_start      : in STD_LOGIC;
-           tx            : out STD_LOGIC
-
-           );
+    Generic (BAUD_RATE : INTEGER := 9600; -- default baud rate of 115200
+             CLK_FREQ : INTEGER := 10_000_000); -- default clock frequency of 50 MHz
+    Port ( clk : in STD_LOGIC;
+           reset : in STD_LOGIC;
+           tx : out STD_LOGIC;
+           data_in : in STD_LOGIC_VECTOR(7 downto 0);
+           tx_start : in STD_LOGIC;
+           tx_done : out STD_LOGIC);
 end uart_tx;
 
-architecture arch of uart_tx is
-    type state_type is (idle, start, data, stop);
-    signal state_reg  : state_type;
-    signal state_next : state_type;
-    signal s_reg      : unsigned (3 downto 0);
-    signal s_next     : unsigned (3 downto 0);
-    signal n_reg      : unsigned (2 downto 0);
-    signal n_next     : unsigned (2 downto 0);
-    signal b_reg      : std_logic_vector (7 downto 0);
-    signal b_next     : std_logic_vector (7 downto 0);
-    signal tx_reg     : std_logic;
-    signal tx_next    : std_logic;
-    
-    
+architecture Behavioral of uart_tx is
+
+    constant BIT_PERIOD : time := 1 sec / BAUD_RATE; -- period of a single bit at the specified baud rate
+    constant HALF_BIT_PERIOD : time := BIT_PERIOD / 2; -- half the period of a single bit
+
+    signal baud_clk : std_logic := '0'; -- baud clock signal used for bit timing
+    signal bit_count : integer range 0 to 10 := 0; -- current bit being transmitted
+    signal tx_reg : std_logic_vector(9 downto 0) := (others => '1'); -- shift register used for transmitting data
+    signal tx_busy : std_logic := '0'; -- busy flag indicating that a transmission is in progress
+
 begin
-   process(clk,reset)
-   begin
-      if reset = '1' then
-         state_reg <= idle;
-         s_reg <= (others=>'0');
-         n_reg <= (others=>'0');
-         b_reg <= (others=>'0');
-         tx_reg <= '1';
-      elsif (clk 'event and clk='1') then
-         state_reg <= state_next;
-         s_reg <= s_next;
-         n_reg <= n_next;
-         b_reg <= b_next;
-         tx_reg <= tx_next;
-      end if;
-   end process;
-   
-   process (state_reg, s_reg, n_reg, b_reg, s_tick, tx_reg, tx_start, din)
-   
-   begin
-      state_next <= state_reg;
-      s_next <= s_reg;
-      n_next <= n_reg;
-      b_next <= b_reg;
-      tx_next <= tx_reg;
-      case state_reg is
-         when idle =>
-            tx_next <= '1';
-            if tx_start = '1' then
-               state_next <= start;
-               s_next <= (others=>'0');
-               b_next <= din;
+
+    -- baud clock generator
+    baud_clk_process: process (clk)
+    begin
+        if rising_edge(clk) then
+            if reset = '1' then
+                baud_clk <= '0';
+            else
+                baud_clk <= not baud_clk;
             end if;
-         when start =>
-            tx_next <= '0';
-            if (s_tick = '1') then
-               if s_reg=15 then
-                  state_next <= data;
-                  s_next <= (others=>'0');
-                  n_next <= (others=>'0');
-               else
-                  s_next <= s_reg + 1;
-               end if;
-             end if;
-          when data =>
-             tx_next <= b_reg(0);
-             if (s_tick = '1') then
-                if s_reg=15 then
-                   s_next <= (others=>'0');
-                   b_next <= '0'& b_reg(7 downto 1);
-                   if n_reg=(DBIT-1) then
-                      state_next <= stop;
-                   else
-                      n_next <= n_reg + 1;
-                   end if;
-                else
-                   s_next <= s_reg + 1;
-                end if;
-             end if;
-          when stop =>
-             tx_next <= '1';
-             if (s_tick = '1') then
-                if s_reg=(SB_TICK-1) then
-                   state_next <= idle;
-                else
-                   s_next <= s_reg + 1;
-                end if;
-             end if;
-       end case;
+        end if;
     end process;
-    tx <= tx_reg;
-end arch;
+
+    -- shift register
+    tx_reg_process: process (baud_clk)
+    begin
+        if rising_edge(baud_clk) then
+            if tx_busy = '1' then
+                if bit_count < 10 then
+                    tx_reg <= std_logic_vector(unsigned(tx_reg) srl 1) & data_in(bit_count);
+                    bit_count <= bit_count + 1;
+                else
+                    tx_reg <= (others => '1');
+                    tx_busy <= '0';
+                    bit_count <= 0;
+                    tx_done <= '1';
+                end if;
+            end if;
+        end if;
+    end process;
+
+    -- transmitter
+    tx_process: process (tx_start, tx_busy)
+    begin
+        if tx_start = '1' and tx_busy = '0' then
+            tx_reg <= (others => '0');
+            tx_busy <= '1';
+            tx_done <= '0';
+        end if;
+
+        if tx_busy = '1' then
+            if bit_count = 0 then
+                tx <= '0'; -- start bit
+            else
+                tx <= tx_reg(0);
+            end if;
+        else
+            tx <= '1';
+        end if;
+    end process;
+
+end Behavioral;
