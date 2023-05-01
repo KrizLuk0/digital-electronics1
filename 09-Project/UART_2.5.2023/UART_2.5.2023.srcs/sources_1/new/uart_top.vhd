@@ -55,7 +55,7 @@ begin
             reset    => reset,
             data_in  => data_in,
             tx_start => tx_start,
-            tx       => tx_out
+            tx       => tx
         );
 
     rx_inst : uart_rx
@@ -67,6 +67,5 @@ begin
             rx_done  => rx_done
         );
 
-    tx <= tx_out;
 
 end Behavioral;
