@@ -14,10 +14,10 @@ UART stands for Universal Asynchronous Receiver/Transmitter, and it is a commonl
 
 ## Hardware description of demo application
 Block diagram of UART designed in VHDL:
-
+[top level code](https://github.com/KrizLuk0/digital-electronics1/blob/main/09-Project/UART_2.5.2023/UART_2.5.2023.srcs/sources_1/new/top.vhd)
 ![uart_schema](https://user-images.githubusercontent.com/124684744/235447990-62608f3f-8d7b-46f5-b637-c452ca2f4952.png)
-
-
+We used the ASCII table for decoding:
+![ascii](https://user-images.githubusercontent.com/124684834/235461945-d93e6585-7254-4841-86ae-12a44e3b3109.png)
 Insert descriptive text and schematic(s) of your implementation.
 
 There is nothing here because after implementing it on the board, it doesn't work.
@@ -25,15 +25,17 @@ There is nothing here because after implementing it on the board, it doesn't wor
 ## Software description
 
 #### Transmitter:
- The "clk" and "reset" inputs are used for clocking and resetting the module, respectively. "tx_start" input is used to initiate the transmission of data, and "data_in" is the 8-bit data input to be transmitted. "tx" output is the serial data output, and "tx_done" output signals when the data transmission is complete. The module has two processes: "baud_clk_process" and "tx_reg_process". The "baud_clk_process" process generates a baud clock signal, which is used to synchronize the transmission of each bit. The "tx_reg_process" process shifts the data bits to be transmitted into a shift register, which is then transmitted serially using the baud clock signal. When "tx_start" input is high, the process starts shifting the data bits into the shift register. The process continues shifting the bits until all 10 bits (start bit, 8 data bits, and stop bit) have been transmitted. Once transmission is complete, the "tx_done" output signal is set high. The "tx_process" process outputs the serial data based on the value of the shift register. When "tx_start" input is high and "tx_busy" is low, the process sets the shift register to all zeroes and sets "tx_busy" to high to signal that data transmission has started. The process then outputs the start bit followed by the 8 data bits and stop bit in sequence based on the value of the shift register.
+[code on uart_tx](https://github.com/KrizLuk0/digital-electronics1/blob/main/09-Project/UART_2.5.2023/UART_2.5.2023.srcs/sources_1/new/uart_tx.vhd)
+This module uses "clk" and "reset" inputs for clocking and resetting, "tx_start" input to initiate data transmission, and "data_in" input for 8-bit data to be transmitted. The "tx" output is the serial data output, and "tx_done" output signals when the transmission is complete. Two processes are used: "baud_clk_process" generates the baud clock signal, while "tx_reg_process" shifts the data bits into a shift register for serial transmission. The "tx_process" outputs serial data based on the shift register value. When "tx_start" is high and "tx_busy" is low, the process sets the shift register to all zeroes, sets "tx_busy" high, and outputs the start bit, 8 data bits, and stop bit in sequence. "tx_done" output is set high when transmission is complete.
 
 #### Reciever:
-The module has an input clock signal ("clk"), a synchronous reset signal ("reset"), and a single-ended input signal ("rx") that carries the serial data stream. The module has two output signals: "data_out" is an 8-bit wide output signal that carries the received byte when the whole byte is received, and "rx_done" is a flag signal that is set to 1 when the byte is received. The state machine of the receiver has four states: "idle", "start_bit", "data_bits", and "stop_bit". The state machine starts in the "idle" state, waits for the "start bit", receives 8 data bits, and then receives a stop bit. When the stop bit is received, the received byte is stored in the "data_out" register, and the "rx_done" flag is set. The "bit_counter" signal is used to count the received bits. When the state machine is in the "start_bit" state, the "bit_counter" is incremented until it reaches 7, which means that all 8 bits have been received. The received bits are stored in the "data_reg". If the stop bit is received, the received byte is stored in the "data_out" register, and the "rx_done" flag is set to 1register.
+[code on uart_rx](https://github.com/KrizLuk0/digital-electronics1/blob/main/09-Project/UART_2.5.2023/UART_2.5.2023.srcs/sources_1/new/uart_rx.vhd)
+This module has input signals "clk" for clock, "reset" for reset, and "rx" for single-ended input carrying serial data. It has output signals "data_out" (8-bit wide) for received byte and "rx_done" flag (set to 1 when byte is received). The state machine has four states: "idle", "start_bit", "data_bits", and "stop_bit". It waits for "start bit", receives 8 data bits, and then a stop bit. The received byte is stored in "data_out" register and "rx_done" flag is set when stop bit is received. "bit_counter" signal counts the received bits. When in "start_bit" state, "bit_counter" is incremented until 7, and received bits are stored in "data_reg". If stop bit is received, the received byte is stored in "data_out" register and "rx_done" flag is set to 1.
 
 ### Component(s) simulation
 
 Screenshot of our UART :
-
+[code on testbench of UART](https://github.com/KrizLuk0/digital-electronics1/blob/main/09-Project/UART_2.5.2023/UART_2.5.2023.srcs/sim_1/new/tb_uart.vhd)
 ![uart_tb1](https://user-images.githubusercontent.com/124684744/235448080-d529142f-33d2-4819-acda-e9c990656aa9.png)
 
 ## Instructions
@@ -53,4 +55,4 @@ The combination should be displayed on the first two seven-segment displays from
 
 ## References
 1. MANO, M. Morris a Michael D. CILETTI. Digital design: with an introduction to the Verilog HDL, VHDL, and SystemVerilog. Sixth edition
-2. ![https://github.com/tomas-fryza/digital-electronics-1] (https://github.com/tomas-fryza/digital-electronics-1)
+2.https://github.com/tomas-fryza/digital-electronics-1
