@@ -1,7 +1,7 @@
 library IEEE;
 use IEEE.STD_LOGIC_1164.ALL;
 
-entity TOP_desk is
+entity top_project is
     generic (
         BAUD_RATE : integer := 9600
     );
@@ -20,17 +20,16 @@ entity TOP_desk is
         DP : out std_logic;
         AN : out STD_LOGIC_VECTOR (7 downto 0);
            
-        tx_start : in std_logic;
-        tx : out std_logic;
-        rx : in std_logic;
-        data_out : out std_logic_vector(7 downto 0);
-        rx_done : out std_logic;
-        user_data : in std_logic_vector(7 downto 0)
+        tx_start    : in std_logic;
+        tx          : out std_logic;
+        rx          : in std_logic;
+        data_out    : out std_logic_vector(7 downto 0);
+        rx_done     : out std_logic
     );
-end TOP_desk;
+end top_project;
 
-architecture Behavioral of TOP_desk is
-    signal segment : std_logic_vector(7 downto 0);
+architecture Behavioral of top_project is
+    signal segment : std_logic_vector(7 downto 0); -- signal pro vystup na segmentov
 begin
     driver_seg : entity work.driver_7seg_4digits
         port map(
@@ -81,7 +80,8 @@ begin
             tx_start  => tx_start,
             tx        => tx,
             rx        => rx,
-            data_out  => data_out,
+            data_out  => segment,
             rx_done   => rx_done
         );
+        data_out <= segment;
 end Behavioral;

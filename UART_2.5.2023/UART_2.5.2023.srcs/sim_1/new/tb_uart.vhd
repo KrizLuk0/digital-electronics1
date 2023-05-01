@@ -45,52 +45,22 @@ begin
     -- Stimulus process
   stimulus : process
 begin
-    -- Wait for reset to be released
+    
     reset <= '1';
     wait for 10 ns;
     reset <= '0';
 
-    -- Transmit "Hello world" over UART
     tx_start <= '1';
-    data_in <= "01001000";  -- H
-    wait for 104 us;         -- Wait for 1 start bit + 8 data bits + 1 stop bit @ 9600 baud
-    data_in <= "01100101";  -- e
-    wait for 104 us;
-    data_in <= "01101100";  -- l
-    wait for 104 us;
-    data_in <= "01101100";  -- l
-    wait for 104 us;
-    data_in <= "01101111";  -- o
-    wait for 104 us;
-    data_in <= "00100000";  -- space
-    wait for 104 us;
-    data_in <= "01110111";  -- w
-    wait for 104 us;
-    data_in <= "01101111";  -- o
-    wait for 104 us;
-    data_in <= "01110010";  -- r
-    wait for 104 us;
-    data_in <= "01101100";  -- l
-    wait for 104 us;
-    data_in <= "01100100";  -- d
-    wait for 104 us;
+    data_in <= "01111001";  -- y
+    wait for 104 us;         -- cekej na 1 start bit + 8 data bits + 1 stop bit - 9600 baud
     tx_start <= '0';
 
-    -- Wait for transmission to complete
+    -- cekej az vysilani bude kompletni
     wait until rx_done = '1';
 
-    -- Check received data
-    assert data_out = "01001000" and
-           data_out = "01100101" and
-           data_out = "01101100" and
-           data_out = "01101100" and
-           data_out = "01101111" and
-           data_out = "00100000" and
-           data_out = "01110111" and
-           data_out = "01101111" and
-           data_out = "01110010" and
-           data_out = "01101100" and
-           data_out = "01100100"
+    -- zkrontoluj prijmute data
+    assert data_out = "01111001" 
+
            report "Received data is incorrect" severity error;
 
     wait;
